@@ -1,11 +1,14 @@
 # AcmeCorporation. A simple raffle entry application
 
 ## Database prerequisites
-This application expects a SQL Server database to be available. The appsettings.development.json file contains a connection string that expects a local instance, but you can make it fit your need. The development configuration also expects a user AcmeRaffleWriter, which must have these permissions:
+This application expects a SQL Server database to be available. The appsettings.development.json file can contain a connection string (key: `ConnectionString`) you can make it fit your need; prefereably though you should use `secrets.json`. 
 
+
+The below example configuration creates a user AcmeRaffleWriter, which is created with these permissions:
+
+- deny all actions to all tables
 - insert and read permissions to the `acme.RaffleParticipant` table;
 - insert, read and update permissions to the `acme.RaffleEntry` table; and,
-- optionally deny read and write to all tables
  
 ## Example database setup script
 The below script must be run as a user with permissions to create logins, users, databases and tables, eg. a `sysadmin`.
