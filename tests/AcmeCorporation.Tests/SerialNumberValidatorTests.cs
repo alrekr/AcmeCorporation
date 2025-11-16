@@ -7,7 +7,9 @@ namespace AcmeCorporation.Tests;
 [TestFixture]
 public class SerialNumberValidatorTests
 {
+#pragma warning disable CA1859 // disable warning about "change type of field" 
     private readonly ISerialNumberValidator _validator = new SerialNumberValidator();
+#pragma warning restore CA1859
 
     [TestCase("abcd123435678efg90")]
     public void SerialNumber_ValidSerialNumber_ReturnsNoError(string serialNumber)
