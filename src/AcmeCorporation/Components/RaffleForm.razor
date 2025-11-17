@@ -88,14 +88,14 @@
 
         try
         {
-            EntryServiceError result = await EntryService.CreateParticipantAndRaffleEntry(Model.Participant.FirstName, Model.Participant.LastName, Model.Participant.Email, Model.SerialNumber, _submitCts.Token);
-            if (result != EntryServiceError.None)
+            (EntryServiceError error, List<string> errorMessages) = await EntryService.CreateParticipantAndRaffleEntry(Model.Participant.FirstName, Model.Participant.LastName, Model.Participant.Email, Model.SerialNumber, _submitCts.Token);
+            if (error != EntryServiceError.None)
             {
-                switch (result)
+                switch (error)
                 {
                     case EntryServiceError.RaffleEntryExceedMax:
                         _maxSubmitsForSerialNumberReached = true;
-                        _submissionError = "The maximum number of submissions for this serial number has been reached.";
+                        _submissionError = string.Join(". ", errorMessages);
                         break;
                     case EntryServiceError.Unknown:
                     default:
