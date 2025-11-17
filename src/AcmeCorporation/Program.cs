@@ -2,8 +2,15 @@ using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
 using AcmeCorporation.Library.Service;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("AcmeCorporationContextConnection") ?? throw new InvalidOperationException("Connection string 'AcmeCorporationContextConnection' not found.");
+
+builder.Services.AddDbContext<AcmeCorporationContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AcmeCorporationContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
