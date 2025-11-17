@@ -1,3 +1,4 @@
+using AcmeCorporation.Areas.Identity.Data;
 using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
@@ -10,7 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("AcmeCorporatio
 
 builder.Services.AddDbContext<AcmeCorporationContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<AcmeCorporationContext>();
+builder.Services.AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AcmeCorporationContext>();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
