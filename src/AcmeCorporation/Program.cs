@@ -1,4 +1,3 @@
-using AcmeCorporation.Areas.Identity.Data;
 using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
@@ -7,10 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("AcmeCorporationContextConnection") ?? throw new InvalidOperationException("Connection string 'AcmeCorporationContextConnection' not found.");
+string connectionString = builder.Configuration.GetConnectionString("AcmeCorporationContextConnection") ?? throw new InvalidOperationException("Connection string 'AcmeCorporationContextConnection' not found.");
 
 builder.Services.AddDbContext<AcmeCorporationContext>(options => options.UseSqlServer(connectionString));
 
+// since this is mainly for demonstration purposes, the account may be unconfirmed.
 builder.Services.AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AcmeCorporationContext>();
 
 // Add services to the container.
@@ -22,7 +22,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ISerialNumberValidator, SerialNumberValidator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddServerSideBlazor();
-var environment = builder.Environment.EnvironmentName;
+string environment = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile("appsettings.json").AddJsonFile($"appsettings.{environment}.json");
 builder.Services.AddOptions<RaffleOptions>().Bind(builder.Configuration.GetSection(RaffleOptions.SectionName));
 
@@ -41,7 +41,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapBlazorHub();
 app.MapRazorPages();
 

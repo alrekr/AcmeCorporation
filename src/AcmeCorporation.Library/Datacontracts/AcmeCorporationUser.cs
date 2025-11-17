@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace AcmeCorporation.Areas.Identity.Data;
+namespace AcmeCorporation.Library.Datacontracts;
 
 // Add profile data for application users by adding properties to the AcmeCorporationUser class
 public class AcmeCorporationUser : IdentityUser

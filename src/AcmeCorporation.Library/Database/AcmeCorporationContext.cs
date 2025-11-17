@@ -1,4 +1,4 @@
-﻿using AcmeCorporation.Areas.Identity.Data;
+﻿using AcmeCorporation.Library.Datacontracts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
