@@ -1,0 +1,136 @@
+﻿@using AcmeCorporation.Library.Datacontracts
+@using AcmeCorporation.Library.Service
+@implements IDisposable
+@inject IEntryService EntryService
+
+<EditForm Model="Model" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger"/>
+    <div class="row mb-3">
+        <label for="firstName" class="col-sm-2 col-form-label">First name: </label>
+        <div class="col-sm-10">
+            <InputText id="firstName" @bind-Value="Model.Participant.FirstName" class="form-control" />
+            <ValidationMessage For="() => Model.Participant.FirstName" class="text-danger" />
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="lastName" class="col-sm-2 col-form-label">Last name: </label>
+        <div class="col-sm-10">
+            <InputText id="lastName" @bind-Value="Model.Participant.LastName" class="form-control" />
+            <ValidationMessage For="() => Model.Participant.LastName" class="text-danger" />
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="email" class="col-sm-2 col-form-label">Email: </label>
+        <div class="col-sm-10">
+            <InputText id="email" @bind-Value="Model.Participant.Email" class="form-control" />
+            <ValidationMessage For="() => Model.Participant.Email" class="text-danger" />
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="serialNumber" class="col-sm-2 col-form-label">Serial number: </label>
+        <div class="col-sm-10">
+            <InputText id="serialNumber" @bind-Value="Model.SerialNumber" class="form-control" />
+            <ValidationMessage For="() => Model.SerialNumber" class="text-danger" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 offset-sm-2">
+            <button type="submit" disabled="@isSubmitting" class="btn btn-primary">
+                @if (isSubmitting)
+                {
+                    <span>Submitting...</span>
+                }
+                else
+                {
+                    <span>Enter the raffle!</span>
+                }
+            </button>
+        </div>
+    </div>
+</EditForm>
+
+@if (isSubmitting)
+{
+    <button @onclick="CancelSubmission" class="btn btn-danger">Cancel</button>
+}
+
+@if (!string.IsNullOrEmpty(_submissionError))
+{
+    <div class="text-warning">@_submissionError</div>
+}
+@if (_formSubmittedSuccessfully)
+{
+    <div class="text-success">Thank you for your entry!</div>
+    <div>Good luck!</div>
+    <div>We will contact you at <b>@Model.Participant.Email</b> if you win.</div>
+}
+
+@code
+{
+    public RaffleDto Model { get; set; } = new();
+
+    private string? _submissionError;
+    private bool _formSubmittedSuccessfully;
+    private bool _maxSubmitsForSerialNumberReached;
+    private bool isSubmitting = false;
+    private CancellationTokenSource? _submitCts;
+
+    private async Task HandleValidSubmit()
+    {
+        _submissionError = null;
+        _formSubmittedSuccessfully = false;
+        _maxSubmitsForSerialNumberReached = false;
+        isSubmitting = true;
+        // ReSharper disable once MethodHasAsyncOverload - there is not reason to use async since the operation is really simple.
+        _submitCts?.Cancel();
+        _submitCts = new CancellationTokenSource();
+
+        try
+        {
+            EntryServiceError result = await EntryService.CreateParticipantAndRaffleEntry(Model.Participant.FirstName, Model.Participant.LastName, Model.Participant.Email, Model.SerialNumber, _submitCts.Token);
+            if (result != EntryServiceError.None)
+            {
+                switch (result)
+                {
+                    case EntryServiceError.RaffleEntryExceedMax:
+                        _maxSubmitsForSerialNumberReached = true;
+                        _submissionError = "The maximum number of submissions for this serial number has been reached.";
+                        break;
+                    case EntryServiceError.Unknown:
+                    default:
+                        _submissionError = "An error occurred during submission, please try again.";
+                        break;
+                }
+                return;
+            }
+
+            _formSubmittedSuccessfully = true;
+            Model = new RaffleDto(Model.Participant.FirstName, Model.Participant.LastName, Model.Participant.Email, string.Empty);
+        }
+        catch (OperationCanceledException)
+        {
+            _submissionError = "Submission cancelled.";
+        }
+        catch (ArgumentException e)
+        {
+            _submissionError = e.Message;
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void CancelSubmission()
+    {
+        _submitCts?.Cancel();
+    }
+
+    public void Dispose()
+    {
+        _submitCts?.Cancel();
+        _submitCts?.Dispose();
+    }
+}
+

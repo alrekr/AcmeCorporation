@@ -1,5 +1,4 @@
 ﻿@page
-@using Microsoft.AspNetCore.Components.Forms
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -7,9 +6,10 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome to Acme Corporation's raffle!</h1>
+</div>
+<div>
+    <p>Thank you for purchasing an Acme Corporation widget!</p>
     <p>In order to participate, please provide the details below.</p>
-    <p>We have an easy-to-follow, simple guide to find the serial number over here!</p>
-    <EditForm>
-
-    </EditForm>
+    <p>We have an easy-to-follow, simple guide to find the serial number <a asp-page="LocateSerialNumber">over here!</a></p>
+    <component type="typeof(AcmeCorporation.Components.RaffleForm)" render-mode="ServerPrerendered"/>
 </div>
