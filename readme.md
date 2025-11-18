@@ -6,7 +6,7 @@ This application expects a SQL Server database to be available. The appsettings.
 
 An example connection string is:
 
-```
+```json
 {
   "ConnectionStrings": { 
     "AcmeConnectionString": "Server=localhost;Database=AcmeRaffleMaltheHS;User Id=AcmeRaffleWriterLogin;Password=SuperStrongPassword123!;TrustServerCertificate=True" 
@@ -63,7 +63,7 @@ This application uses ASP.NET Core Identity for user management which is depende
 
 Example connectionstring:
 
-```
+```json
 {
   "ConnectionStrings": {
       "AcmeCorporationContextConnection": "Server=localhost;Integrated Security=SSPI;Database=AcmeRaffleMaltheHS;MultipleActiveResultSets=true;TrustServerCertificate=True"
