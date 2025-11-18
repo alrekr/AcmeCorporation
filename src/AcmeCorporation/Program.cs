@@ -15,12 +15,12 @@ builder.Services.AddDbContext<AcmeCorporationContext>(options => options.UseSqlS
 
 // since this is mainly for demonstration purposes, the account may be unconfirmed.
 builder.Services
-    .AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddIdentity<AcmeCorporationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<AcmeCorporationContext>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
-// Add services to the container.
+// Add services
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<AcmeDatabase>();
 builder.Services.AddScoped<ParticipantRepository>();
@@ -29,6 +29,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ISerialNumberValidator, SerialNumberValidator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<AdminUserSeeder>();
+
 builder.Services.AddServerSideBlazor();
 string environment = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile("appsettings.json").AddJsonFile($"appsettings.{environment}.json");

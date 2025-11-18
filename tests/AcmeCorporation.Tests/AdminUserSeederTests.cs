@@ -12,7 +12,7 @@ namespace AcmeCorporation.Tests;
 [TestFixture]
 public class AdminUserSeederTests
 {
-    private UserManager<IdentityUser> _mockUserManager;
+    private UserManager<AcmeCorporationUser> _mockUserManager;
     private RoleManager<IdentityRole> _mockRoleManager;
     private IOptions<AdminOptions> _mockOptions;
     private ILogger<AdminUserSeeder> _mockLogger;
@@ -23,10 +23,10 @@ public class AdminUserSeederTests
     [SetUp]
     public void SetUp()
     {
-        IUserStore<IdentityUser>? userStore = Substitute.For<IUserEmailStore<IdentityUser>>();
+        IUserStore<AcmeCorporationUser>? userStore = Substitute.For<IUserEmailStore<AcmeCorporationUser>>();
         ILookupNormalizer? normalizer = Substitute.For<ILookupNormalizer>();
         normalizer.NormalizeEmail(Arg.Any<string>()).Returns(args => args[0]?.ToString()?.ToUpperInvariant());
-        _mockUserManager = Substitute.For<UserManager<IdentityUser>>(userStore, null, null, null, null, normalizer, null, null, null);
+        _mockUserManager = Substitute.For<UserManager<AcmeCorporationUser>>(userStore, null, null, null, null, normalizer, null, null, null);
 
         IRoleStore<IdentityRole>? roleStore = Substitute.For<IRoleStore<IdentityRole>>();
         _mockRoleManager = Substitute.For<RoleManager<IdentityRole>>(roleStore, null, null, null, null);
@@ -72,7 +72,7 @@ public class AdminUserSeederTests
         // Arrange
         AdminOptions options = new() { Email = "admin@test.com" };
         IOptions<AdminOptions> mockOptions = Options.Create(options);
-        _mockUserManager.FindByEmailAsync(options.Email)!.Returns(Task.FromResult(new IdentityUser()));
+        _mockUserManager.FindByEmailAsync(options.Email)!.Returns(Task.FromResult(new AcmeCorporationUser()));
         _seeder = new AdminUserSeeder(
             _mockRoleManager,
             _mockUserManager,
@@ -88,7 +88,7 @@ public class AdminUserSeederTests
         await _mockUserManager.Received(1).FindByEmailAsync(options.Email);
 
         // Verify no roles were created
-        await _mockUserManager.DidNotReceive().CreateAsync(Arg.Any<IdentityUser>(), Arg.Any<string>());
+        await _mockUserManager.DidNotReceive().CreateAsync(Arg.Any<AcmeCorporationUser>(), Arg.Any<string>());
     }
 
     [Test]
@@ -102,7 +102,7 @@ public class AdminUserSeederTests
             Password = string.Empty
         };
         IOptions<AdminOptions> mockOptions = Options.Create(options);
-        _mockUserManager.FindByEmailAsync(options.Email).Returns(Task.FromResult<IdentityUser?>(null));
+        _mockUserManager.FindByEmailAsync(options.Email).Returns(Task.FromResult<AcmeCorporationUser?>(null));
         _seeder = new AdminUserSeeder(
             _mockRoleManager,
             _mockUserManager,
@@ -114,7 +114,7 @@ public class AdminUserSeederTests
         InvalidOperationException ex = await _seeder.SeedAdminUserAsync().ShouldThrowAsync<InvalidOperationException>();
         ex.Message.ShouldBe("DefaultAdminUser configuration is incomplete.");
         // Verify no user creation was attempted
-        await _mockUserManager.DidNotReceive().CreateAsync(Arg.Any<IdentityUser>(), Arg.Any<string>());
+        await _mockUserManager.DidNotReceive().CreateAsync(Arg.Any<AcmeCorporationUser>(), Arg.Any<string>());
     }
 
     [Test]
@@ -128,7 +128,7 @@ public class AdminUserSeederTests
             RoleName = string.Empty
         };
         IOptions<AdminOptions> mockOptions = Options.Create(options);
-        Task emptyIdentity = Task.FromResult<IdentityUser?>(null);
+        Task emptyIdentity = Task.FromResult<AcmeCorporationUser?>(null);
         _mockUserManager.FindByEmailAsync(options.Email).Returns(emptyIdentity);
         _seeder = new AdminUserSeeder(
             _mockRoleManager,
@@ -153,12 +153,12 @@ public class AdminUserSeederTests
             RoleName = "Administrator"
         };
         
-        _mockUserManager.FindByEmailAsync(options.Email).Returns(Task.FromResult<IdentityUser?>(null));
+        _mockUserManager.FindByEmailAsync(options.Email).Returns(Task.FromResult<AcmeCorporationUser?>(null));
         _mockRoleManager.RoleExistsAsync(options.RoleName).Returns(Task.FromResult(false));
         _mockRoleManager.CreateAsync(Arg.Any<IdentityRole>()).Returns(Task.FromResult(IdentityResult.Success));
-        IdentityUser? capturedUser = null;
-        _mockUserManager.CreateAsync(Arg.Do<IdentityUser>(u => capturedUser = u), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
-        _mockUserManager.AddToRoleAsync(Arg.Any<IdentityUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
+        AcmeCorporationUser? capturedUser = null;
+        _mockUserManager.CreateAsync(Arg.Do<AcmeCorporationUser>(u => capturedUser = u), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
+        _mockUserManager.AddToRoleAsync(Arg.Any<AcmeCorporationUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
 
         _seeder = new AdminUserSeeder(
             _mockRoleManager,
@@ -181,7 +181,7 @@ public class AdminUserSeederTests
         capturedUser.EmailConfirmed.ShouldBeTrue();
 
         // Verify User was assigned to Role
-        await _mockUserManager.Received(1).AddToRoleAsync(Arg.Is<IdentityUser>(u => u.Email == options.Email), options.RoleName);
+        await _mockUserManager.Received(1).AddToRoleAsync(Arg.Is<AcmeCorporationUser>(u => u.Email == options.Email), options.RoleName);
     }
 
     [Test]
@@ -195,10 +195,10 @@ public class AdminUserSeederTests
             RoleName = "ExistingRole"
         };
 
-        _mockUserManager.FindByEmailAsync(options.Email)!.Returns(Task.FromResult<IdentityUser?>(null));
+        _mockUserManager.FindByEmailAsync(options.Email)!.Returns(Task.FromResult<AcmeCorporationUser?>(null));
         _mockRoleManager.RoleExistsAsync(options.RoleName).Returns(Task.FromResult(true));
-        _mockUserManager.CreateAsync(Arg.Any<IdentityUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
-        _mockUserManager.AddToRoleAsync(Arg.Any<IdentityUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
+        _mockUserManager.CreateAsync(Arg.Any<AcmeCorporationUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
+        _mockUserManager.AddToRoleAsync(Arg.Any<AcmeCorporationUser>(), Arg.Any<string>()).Returns(Task.FromResult(IdentityResult.Success));
         _seeder = new AdminUserSeeder(
             _mockRoleManager,
             _mockUserManager,
@@ -217,7 +217,7 @@ public class AdminUserSeederTests
         await _mockRoleManager.DidNotReceive().CreateAsync(Arg.Any<IdentityRole>());
 
         // Verify we still created the user and assigned the role
-        await _mockUserManager.Received(1).CreateAsync(Arg.Is<IdentityUser>(u => u.Email == options.Email), options.Password);
-        await _mockUserManager.Received(1).AddToRoleAsync(Arg.Is<IdentityUser>(u => u.Email == options.Email), options.RoleName);
+        await _mockUserManager.Received(1).CreateAsync(Arg.Is<AcmeCorporationUser>(u => u.Email == options.Email), options.Password);
+        await _mockUserManager.Received(1).AddToRoleAsync(Arg.Is<AcmeCorporationUser>(u => u.Email == options.Email), options.RoleName);
     }
 }

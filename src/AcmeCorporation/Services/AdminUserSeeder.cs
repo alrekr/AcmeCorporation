@@ -7,13 +7,13 @@ namespace AcmeCorporation.Services;
 internal class AdminUserSeeder
 {
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<AcmeCorporationUser> _userManager;
     private readonly AdminOptions _adminOptions;
     private readonly ILogger<AdminUserSeeder> _logger;
 
     public AdminUserSeeder(
         RoleManager<IdentityRole> roleManager,
-        UserManager<IdentityUser> userManager,
+        UserManager<AcmeCorporationUser> userManager,
         IOptions<AdminOptions> adminOptions,
         ILogger<AdminUserSeeder> logger)
     {
@@ -58,7 +58,7 @@ internal class AdminUserSeeder
             _logger.LogInformation("Created default admin role '{RoleName}'.", _adminOptions.RoleName);
         }
 
-        adminUser = new IdentityUser
+        adminUser = new AcmeCorporationUser
         {
             UserName = _adminOptions.Username,
             Email = _adminOptions.Email,
