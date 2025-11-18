@@ -23,7 +23,7 @@ public class SerialNumberApiTests
     public void SetUp()
     {
         _mockGenerator = Substitute.For<ISerialNumberGenerator>();
-        _mockGenerator.CreateSerialNumber().Returns("MOCK-SN-123");
+        _mockGenerator.GenerateSerialNumber().Returns("MOCK-SN-123");
 
         _factory = new WebApplicationFactory<Program>()
             .WithWebHostBuilder(builder =>
@@ -70,7 +70,7 @@ public class SerialNumberApiTests
         result.ShouldNotBeNull();
         result.Count.ShouldBe(requestedCount);
 
-        _mockGenerator.Received(requestedCount).CreateSerialNumber();
+        _mockGenerator.Received(requestedCount).GenerateSerialNumber();
     }
 
     [Test]
@@ -89,7 +89,7 @@ public class SerialNumberApiTests
         string errorMsg = await response.Content.ReadAsStringAsync();
         errorMsg.ShouldContain("You cannot generate more than 10 serial numbers");
 
-        _mockGenerator.DidNotReceive().CreateSerialNumber();
+        _mockGenerator.DidNotReceive().GenerateSerialNumber();
     }
 
     [Test]
@@ -103,7 +103,7 @@ public class SerialNumberApiTests
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        _mockGenerator.DidNotReceive().CreateSerialNumber();
+        _mockGenerator.DidNotReceive().GenerateSerialNumber();
     }
 
     [Test]
@@ -121,6 +121,6 @@ public class SerialNumberApiTests
 
         result.ShouldNotBeNull();
         result.Count.ShouldBe(1);
-        _mockGenerator.Received(1).CreateSerialNumber();
+        _mockGenerator.Received(1).GenerateSerialNumber();
     }
 }

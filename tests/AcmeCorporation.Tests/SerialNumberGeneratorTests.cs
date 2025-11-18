@@ -32,7 +32,7 @@ public class SerialNumberGeneratorTests
                              uniqueDigitsLength;
 
         // Act
-        string serialNumber = _generator.CreateSerialNumber();
+        string serialNumber = _generator.GenerateSerialNumber();
 
         // Assert
         serialNumber.Length.ShouldBe(expectedLength);

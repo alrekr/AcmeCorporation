@@ -5,5 +5,5 @@
 /// </summary>
 public interface ISerialNumberGenerator
 {
-    string CreateSerialNumber();
+    string GenerateSerialNumber();
 }

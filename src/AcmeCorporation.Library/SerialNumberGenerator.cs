@@ -20,7 +20,7 @@ public class SerialNumberGenerator : ISerialNumberGenerator
 {
     private static readonly char[] Alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-    public string CreateSerialNumber()
+    public string GenerateSerialNumber()
     {
         int totalLength = GetTotalLength();
 

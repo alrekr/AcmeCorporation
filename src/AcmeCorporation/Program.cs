@@ -91,7 +91,7 @@ app.MapGet("/api/v1/serialnumbers", (int? n, ISerialNumberGenerator generator, I
     string[] serialNumbers = new string[count];
     for (int i = 0; i < count; i++)
     {
-        serialNumbers[i] = generator.CreateSerialNumber();
+        serialNumbers[i] = generator.GenerateSerialNumber();
     }
 
     return Results.Ok(serialNumbers);
