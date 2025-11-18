@@ -5,7 +5,6 @@ using AcmeCorporation.Library.Datacontracts;
 using AcmeCorporation.Library.Service;
 using AcmeCorporation.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -64,19 +63,8 @@ app.MapBlazorHub();
 app.MapRazorPages();
 
 app.MapFallbackToPage("/_Host");
-// Usually this should be done via a secure method, such as a CLI (for server apps) or a migration. 
-// For demonstration purposes this is done here.
-try
-{
-    using IServiceScope scope = app.Services.CreateScope();
-    AdminUserSeeder adminSeeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
-    await adminSeeder.SeedAdminUserAsync();
-}
-catch (Exception ex)
-{
-    ILogger<Program> logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during application startup seeding.");
-}
+
+await SeedDatabase(app);
 
 app.MapGet("/api/v1/serialnumbers", (int? n, ISerialNumberGenerator generator, IOptions<SerialNumberApiOptions> options) =>
 {
@@ -125,5 +113,31 @@ if (app.Environment.IsDevelopment())
 }
 app.Run();
 
+return;
+
+static async Task SeedDatabase(WebApplication webApplication)
+{
+    // Usually this should be done via a secure method, such as a CLI for server apps.
+    // For demonstration purposes this is done here.
+
+    try
+    {
+        using IServiceScope scope = webApplication.Services.CreateScope();
+        IServiceProvider services = scope.ServiceProvider;
+        AcmeCorporationContext context = services.GetRequiredService<AcmeCorporationContext>();
+        if ((await context.Database.GetPendingMigrationsAsync()).Any())
+        {
+            await context.Database.MigrateAsync();
+        }
+
+        AdminUserSeeder adminSeeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
+        await adminSeeder.SeedAdminUserAsync();
+    }
+    catch (Exception ex)
+    {
+        ILogger<Program> logger = webApplication.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding or migrating the database.");
+    }
+}
 
 public partial class Program { }
