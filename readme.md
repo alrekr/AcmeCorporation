@@ -23,7 +23,7 @@ The below example configuration creates a user `AcmeRaffleWriter`, which is crea
  
 ### Database setup script
 
-The below script must be run as a user before running the application first time with permissions to create logins, users, databases and tables, eg. a `sysadmin`.
+The below script must be executed before running the application first time as a user with permissions to create logins, users, databases and tables, eg. a `sysadmin`.
 
 ```sql
 use master
