@@ -65,13 +65,13 @@ app.MapFallbackToPage("/_Host");
 // For demonstration purposes this is done here.
 try
 {
-    using var scope = app.Services.CreateScope();
-    var adminSeeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
+    using IServiceScope scope = app.Services.CreateScope();
+    AdminUserSeeder adminSeeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
     await adminSeeder.SeedAdminUserAsync();
 }
 catch (Exception ex)
 {
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    ILogger<Program> logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogError(ex, "An error occurred during application startup seeding.");
 }
 

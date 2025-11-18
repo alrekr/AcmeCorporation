@@ -145,7 +145,7 @@ public class AdminUserSeederTests
     public async Task SeedAdminUserAsync_ShouldCreateUserAndRole_WhenUserDoesNotExist()
     {
         // Arrange
-        var options = new AdminOptions
+        AdminOptions options = new AdminOptions
         {
             Email = "newadmin@test.com",
             Username = "newadmin@test.com",
@@ -188,7 +188,7 @@ public class AdminUserSeederTests
     public async Task SeedAdminUserAsync_ShouldSkipRoleCreation_WhenRoleAlreadyExists()
     {
         // Arrange
-        var options = new AdminOptions
+        AdminOptions options = new AdminOptions
         {
             Email = "admin@test.com",
             Password = "SecurePassword123!",

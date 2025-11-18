@@ -31,7 +31,7 @@ internal class AdminUserSeeder
             return;
         }
 
-        var adminUser = await _userManager.FindByEmailAsync(_adminOptions.Email);
+        AcmeCorporationUser? adminUser = await _userManager.FindByEmailAsync(_adminOptions.Email);
         if (adminUser != null)
         {
             _logger.LogInformation("Default admin user '{Email}' already exists. Skipping seeding.", _adminOptions.Email);
@@ -61,7 +61,7 @@ internal class AdminUserSeeder
             LockoutEnabled = false
         };
 
-        var result = await _userManager.CreateAsync(adminUser, _adminOptions.Password);
+        IdentityResult result = await _userManager.CreateAsync(adminUser, _adminOptions.Password);
 
         if (result.Succeeded)
         {
@@ -70,7 +70,7 @@ internal class AdminUserSeeder
         }
         else
         {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+            string errors = string.Join(", ", result.Errors.Select(e => e.Description));
             _logger.LogError("Failed to create default admin user '{Email}'. Errors: {Errors}", _adminOptions.Email, errors);
         }
     }

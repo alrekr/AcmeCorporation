@@ -34,7 +34,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var entry in _result.Items)
+                @foreach (RaffleEntryViewDto entry in _result.Items)
                 {
                     <tr>
                         <td>@entry.EntryDateTimeUtc.ToString("yyyy-MM-dd HH:mm")</td>
