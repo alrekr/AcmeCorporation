@@ -8,13 +8,11 @@ namespace AcmeCorporation.Library.Database;
 public class RaffleRepository
 {
     private readonly AcmeDatabase _database;
-    private readonly TimeProvider _timeProvider;
     private readonly ILogger<RaffleRepository> _logger;
 
-    public RaffleRepository(AcmeDatabase database, TimeProvider timeProvider, ILogger<RaffleRepository> logger)
+    public RaffleRepository(AcmeDatabase database, ILogger<RaffleRepository> logger)
     {
         _database = database;
-        _timeProvider = timeProvider;
         _logger = logger;
     }
 
@@ -23,23 +21,23 @@ public class RaffleRepository
     /// </summary>
     /// <param name="serialNumber">The serial number for the raffle. It is assumed that the serial number is already validated with the <see cref="SerialNumberValidator"/>.</param>
     /// <param name="participantId">Id of a participant. It is expected that the id is of the correct participant.</param>
-    /// <param name="entryCount"></param>
+    /// <param name="entryTime"></param>
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A bool that indicate 'success'.</returns>
-    public async Task<bool> AddRaffle(string serialNumber, int participantId, int entryCount, CancellationToken cancellationToken)
+    public async Task<bool> AddRaffle(string serialNumber, int participantId, DateTime entryTime, CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrEmpty(serialNumber);
 
         using IDbConnection dbConnection = _database.CreateConnection();
         
         const string insertQuery = """
-                                   insert into acme.RaffleEntry (SerialNumber, ParticipantId, EntryCount, EntryDateTimeUtc)
-                                   values (@SerialNumber, @ParticipantId, @EntryCount, @EntryDateTimeUtc)
+                                   insert into acme.RaffleEntry (SerialNumber, ParticipantId, EntryDateTimeUtc)
+                                   values (@SerialNumber, @ParticipantId, @EntryDateTimeUtc)
                                    """;
 
         var command = new CommandDefinition(
             insertQuery,
-            parameters: new { SerialNumber = serialNumber, ParticipantId = participantId, EntryCount = entryCount, EntryDateTimeUtc = _timeProvider.GetUtcNow()},
+            parameters: new { SerialNumber = serialNumber, ParticipantId = participantId, EntryDateTimeUtc = entryTime },
             cancellationToken: cancellationToken);
         try
         {

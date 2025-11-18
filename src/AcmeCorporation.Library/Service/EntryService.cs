@@ -10,17 +10,20 @@ public class EntryService : IEntryService
     private readonly RaffleRepository _raffleRepository;
     private readonly ISerialNumberValidator _serialNumberValidator;
     private readonly IOptions<RaffleOptions> _options;
+    private readonly TimeProvider _timeProvider;
 
     public EntryService(
         ParticipantRepository participantRepository, 
         RaffleRepository raffleRepository, 
         ISerialNumberValidator serialNumberValidator,
-        IOptions<RaffleOptions> options)
+        IOptions<RaffleOptions> options,
+        TimeProvider timeProvider)
     {
         _participantRepository = participantRepository;
         _raffleRepository = raffleRepository;
         _serialNumberValidator = serialNumberValidator;
         _options = options;
+        _timeProvider = timeProvider;
     }
 
     /// <inheritdoc/>
@@ -41,7 +44,8 @@ public class EntryService : IEntryService
             return (EntryServiceError.RaffleEntryExceedMax, []);
         }
 
-        bool success = await _raffleRepository.AddRaffle(serialNumber, participant, count, cancellationToken);
+        DateTime now = _timeProvider.GetUtcNow().UtcDateTime;
+        bool success = await _raffleRepository.AddRaffle(serialNumber, participant, now, cancellationToken);
 
         if (success)
         {
