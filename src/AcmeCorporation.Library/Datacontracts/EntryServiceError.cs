@@ -10,5 +10,6 @@ public enum EntryServiceError
 {
     None = 0,
     Unknown,
-    RaffleEntryExceedMax
+    RaffleEntryExceedMax,
+    AgeNotEligible
 }

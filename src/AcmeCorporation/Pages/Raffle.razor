@@ -116,7 +116,7 @@ else
 }
 
 @code
-    {
+{
     public RaffleDto Model { get; set; } = new();
     private DateOnly _dateOfBirth = DateOnly.FromDateTime(DateTime.Today);
 
@@ -128,15 +128,7 @@ else
 
     private void VerifyAge()
     {
-        DateOnly today = DateOnly.FromDateTime(DateTimeProvider.GetLocalNow().Date);
-        int age = today.Year - _dateOfBirth.Year;
-
-        if (_dateOfBirth > today.AddYears(-age))
-        {
-            age--;
-        }
-
-        SessionState.IsEligible = age >= 18;
+        SessionState.IsEligible = EntryService.VerifyAge(_dateOfBirth);
         StateHasChanged();
     }
 
@@ -152,7 +144,13 @@ else
 
         try
         {
-            (EntryServiceError error, List<string> errorMessages) = await EntryService.CreateParticipantAndRaffleEntry(Model.Participant.FirstName, Model.Participant.LastName, Model.Participant.Email, Model.SerialNumber, _submitCts.Token);
+            (EntryServiceError error, List<string> errorMessages) = await EntryService.CreateParticipantAndRaffleEntry(
+                Model.Participant.FirstName, 
+                Model.Participant.LastName, 
+                Model.Participant.Email, 
+                Model.SerialNumber, 
+                _dateOfBirth,
+                _submitCts.Token);
             if (error != EntryServiceError.None)
             {
                 switch (error)

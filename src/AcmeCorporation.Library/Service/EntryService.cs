@@ -13,8 +13,8 @@ public class EntryService : IEntryService
     private readonly TimeProvider _timeProvider;
 
     public EntryService(
-        ParticipantRepository participantRepository, 
-        RaffleRepository raffleRepository, 
+        ParticipantRepository participantRepository,
+        RaffleRepository raffleRepository,
         ISerialNumberValidator serialNumberValidator,
         IOptions<RaffleOptions> options,
         TimeProvider timeProvider)
@@ -27,10 +27,16 @@ public class EntryService : IEntryService
     }
 
     /// <inheritdoc/>
-    public async Task<(EntryServiceError error, List<string> errorMessages)> CreateParticipantAndRaffleEntry(string firstName, string lastName, string email, string serialNumber, CancellationToken cancellationToken)
+    public async Task<(EntryServiceError error, List<string> errorMessages)> CreateParticipantAndRaffleEntry(string firstName, string lastName, string email, string serialNumber, DateOnly dateOfBirth, CancellationToken cancellationToken)
     {
+        var isEligible = VerifyAge(dateOfBirth);
+        if (!isEligible)
+        {
+            return (EntryServiceError.AgeNotEligible, ["User must be over 18 years."]);
+        }
+
         (bool valid, List<string> errors) = _serialNumberValidator.ValidateSerialNumber(serialNumber);
-        
+
         if (!valid)
         {
             return (EntryServiceError.Unknown, errors);
@@ -59,5 +65,19 @@ public class EntryService : IEntryService
     public async Task<PagedResult<RaffleEntryViewDto>> GetPagedEntriesAsync(int page, int pageSize, CancellationToken cancellationToken)
     {
         return await _raffleRepository.GetPagesEntriesAsync(page, pageSize, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public bool VerifyAge(DateOnly dateOfBirth)
+    {
+        DateOnly today = DateOnly.FromDateTime(_timeProvider.GetLocalNow().Date);
+        int age = today.Year - dateOfBirth.Year;
+
+        if (dateOfBirth > today.AddYears(-age))
+        {
+            age--;
+        }
+
+        return age >= 18;
     }
 }
