@@ -1,8 +1,9 @@
 ﻿using AcmeCorporation.Library.Datacontracts;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace AcmeCorporation.Services;
+namespace AcmeCorporation.Library.Service;
 
 internal class AdminUserSeeder
 {
