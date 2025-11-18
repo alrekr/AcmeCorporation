@@ -2,8 +2,11 @@ using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
 using AcmeCorporation.Library.Service;
+using AcmeCorporation.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 string connectionString = builder.Configuration.GetConnectionString("AcmeCorporationContextConnection") ?? throw new InvalidOperationException("Connection string 'AcmeCorporationContextConnection' not found.");
@@ -11,7 +14,11 @@ string connectionString = builder.Configuration.GetConnectionString("AcmeCorpora
 builder.Services.AddDbContext<AcmeCorporationContext>(options => options.UseSqlServer(connectionString));
 
 // since this is mainly for demonstration purposes, the account may be unconfirmed.
-builder.Services.AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AcmeCorporationContext>();
+builder.Services
+    .AddDefaultIdentity<AcmeCorporationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<AcmeCorporationContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -21,10 +28,12 @@ builder.Services.AddScoped<RaffleRepository>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ISerialNumberValidator, SerialNumberValidator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
+builder.Services.AddScoped<AdminUserSeeder>();
 builder.Services.AddServerSideBlazor();
 string environment = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile("appsettings.json").AddJsonFile($"appsettings.{environment}.json");
 builder.Services.AddOptions<RaffleOptions>().Bind(builder.Configuration.GetSection(RaffleOptions.SectionName));
+builder.Services.AddOptions<AdminOptions>().Bind(builder.Configuration.GetSection(AdminOptions.SectionName));
 
 WebApplication app = builder.Build();
 
@@ -46,5 +55,19 @@ app.UseAuthorization();
 
 app.MapBlazorHub();
 app.MapRazorPages();
+
+// Usually this should be done via a secure method, such as a CLI (for server apps) or a migration. 
+// For demonstration purposes this is done here.
+try
+{
+    using var scope = app.Services.CreateScope();
+    var adminSeeder = scope.ServiceProvider.GetRequiredService<AdminUserSeeder>();
+    await adminSeeder.SeedAdminUserAsync();
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during application startup seeding.");
+}
 
 app.Run();
