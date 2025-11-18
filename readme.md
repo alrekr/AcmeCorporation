@@ -2,7 +2,7 @@
 
 ## Database prerequisites
 
-This application expects a SQL Server database to be available. The appsettings.development.json file can contain a connection string (key: `AcmeConnectionString`) in the `ConnectionStrings` element you can make it fit your need; preferably though you should use `secrets.json`. 
+This application expects a SQL Server database to be available. The `appsettings.development.json` file can contain a connection string (key: `AcmeConnectionString`) in the `ConnectionStrings` element you can make it fit your need; preferably though you should use `secrets.json`. 
 
 An example connection string is:
 
@@ -21,9 +21,9 @@ The below example configuration creates a user `AcmeRaffleWriter`, which is crea
 - insert and read permissions to the `acme.RaffleParticipant` table, and
 - insert and read permissions to the `acme.RaffleEntry` table.
  
-### Example database setup script
+### Database setup script
 
-The below script must be run as a user with permissions to create logins, users, databases and tables, eg. a `sysadmin`.
+The below script must be run as a user before running the application first time with permissions to create logins, users, databases and tables, eg. a `sysadmin`.
 
 ```sql
 use master
