@@ -12,10 +12,10 @@ Server=localhost;Database=AcmeRaffleMaltheHS;User Id=AcmeRaffleWriterLogin;Passw
 
 ## Persistance 
 
-The below example configuration creates a user AcmeRaffleWriter, which is created with these permissions:
+The below example configuration creates a user `AcmeRaffleWriter`, which is created with these permissions:
 
 - insert and read permissions to the `acme.RaffleParticipant` table, and
-- insert, read and update permissions to the `acme.RaffleEntry` table.
+- insert and read permissions to the `acme.RaffleEntry` table.
  
 ### Example database setup script
 
@@ -81,4 +81,4 @@ The RoleName is configurable, but the application can only handle the value "Adm
 
 The `acme.http` file shows how you can generate some serial numbers for testing purposes. It also shows how the database can be filled using `Bogus` for data generation. 
 
-To use the `acme.http` file in Visual Studio, just start the application and then hit "Send Request" for the request you want to execute.
+To use the `acme.http` file in Visual Studio, just start the application and then hit "Send request" for the request you want to execute.
