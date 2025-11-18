@@ -10,7 +10,6 @@
 <div>
     <p>Thank you for purchasing an Acme Corporation widget!</p>
     <p>In order to participate, please provide the details below.</p>
-    <p>We have an easy-to-follow, simple guide to find the serial number <a asp-page="LocateSerialNumber">over here!</a></p>
 </div>
 <EditForm Model="Model" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -20,6 +19,7 @@
         <div class="col-sm-10">
             <InputText id="firstName" @bind-Value="Model.Participant.FirstName" class="form-control" />
             <ValidationMessage For="() => Model.Participant.FirstName" class="text-danger" />
+    <p>We have an easy-to-follow, simple guide to find the serial number <NavLink href="locate-serial-number">over here!</NavLink></p>
         </div>
     </div>
     <div class="row mb-3">
