@@ -1,3 +1,4 @@
+using AcmeCorporation.Configuration;
 using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<ParticipantRepository>();
 builder.Services.AddScoped<RaffleRepository>();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ISerialNumberValidator, SerialNumberValidator>();
+builder.Services.AddSingleton<ISerialNumberGenerator, SerialNumberGenerator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<AdminUserSeeder>();
 
@@ -35,6 +37,7 @@ string environment = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile("appsettings.json").AddJsonFile($"appsettings.{environment}.json");
 builder.Services.AddOptions<RaffleOptions>().Bind(builder.Configuration.GetSection(RaffleOptions.SectionName));
 builder.Services.AddOptions<AdminOptions>().Bind(builder.Configuration.GetSection(AdminOptions.SectionName));
+builder.Services.AddOptions<SerialNumberApiOptions>().Bind(builder.Configuration.GetSection(SerialNumberApiOptions.SectionName));
 
 WebApplication app = builder.Build();
 
@@ -72,4 +75,34 @@ catch (Exception ex)
     logger.LogError(ex, "An error occurred during application startup seeding.");
 }
 
+app.MapGet("/api/v1/serialnumbers", (int? n, ISerialNumberGenerator generator, IOptions<SerialNumberApiOptions> options) =>
+{
+    int count = n ?? 1;
+    if (count < 1)
+    {
+        return Results.BadRequest("Count (n) must be greater than 0.");
+    }
+
+    if (count > options.Value.MaxBatchSize)
+    {
+        return Results.BadRequest($"You cannot generate more than {options.Value.MaxBatchSize} serial numbers.");
+    }
+
+    string[] serialNumbers = new string[count];
+    for (int i = 0; i < count; i++)
+    {
+        serialNumbers[i] = generator.CreateSerialNumber();
+    }
+
+    return Results.Ok(serialNumbers);
+})
+    .WithName("GenerateSerialNumbers") 
+    .WithSummary("Generates a list of unique serial numbers.") 
+    .WithDescription("Returns a JSON array of serial numbers. Limits apply.") 
+    .Produces<List<string>>() 
+    .Produces(StatusCodes.Status400BadRequest); 
+
 app.Run();
+
+
+public partial class Program{}

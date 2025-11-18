@@ -1,0 +1,14 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+# To use: Launch the application (with or without debugger attached) and then hit "Send request"
+
+### Get Serial Numbers
+
+### Get single serial number
+GET https://localhost:7023/api/v1/serialnumbers
+
+### Get 100 serial numbers
+GET https://localhost:7023/api/v1/serialnumbers?n=100
+
+### Get 1000 serial numbers (should fail under current configuration)
+GET https://localhost:7023/api/v1/serialnumbers?n=1000
