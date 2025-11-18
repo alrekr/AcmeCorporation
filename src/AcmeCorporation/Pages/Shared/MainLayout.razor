@@ -3,11 +3,26 @@
 
 <div class="page">
     <div class="sidebar">
-        <NavMenu /> </div>
+        <NavMenu />
+    </div>
 
     <main>
         <div class="top-row px-4">
-            <a href="Identity/Account/Login">Login</a>
+            <AuthorizeView>
+                <Authorized>
+                    <div class="d-flex gap-3 align-items-center">
+                        <span>You're signed in as @context.User.Identity?.Name</span>
+                        <form method="post" action="Identity/Account/Logout">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="/"/>
+                            <button type="submit" class="nav-link btn btn-link p-0">Logout</button>
+                        </form>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <div><a href="Identity/Account/Login">Login</a></div>
+                </NotAuthorized>
+            </AuthorizeView>
         </div>
 
         <article class="content px-4">

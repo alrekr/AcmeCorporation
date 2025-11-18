@@ -13,6 +13,9 @@ using Microsoft.Extensions.Logging;
 
 namespace AcmeCorporation.Areas.Identity.Pages.Account
 {
+    // Because of the Blazor-Razor gap, standard antiforgerytokens doesn't work.
+    // This attribute introduce a security issue that can be classified as Denial-of-Service.
+    [IgnoreAntiforgeryToken]
     public class LogoutModel : PageModel
     {
         private readonly SignInManager<AcmeCorporationUser> _signInManager;
