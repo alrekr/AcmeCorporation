@@ -7,7 +7,11 @@ This application expects a SQL Server database to be available. The appsettings.
 An example connection string is:
 
 ```
-Server=localhost;Database=AcmeRaffleMaltheHS;User Id=AcmeRaffleWriterLogin;Password=SuperStrongPassword123!;TrustServerCertificate=True
+{
+  "ConnectionStrings": { 
+    "AcmeConnectionString": "Server=localhost;Database=AcmeRaffleMaltheHS;User Id=AcmeRaffleWriterLogin;Password=SuperStrongPassword123!;TrustServerCertificate=True" 
+  } 
+}
 ```
 
 ## Persistance 
@@ -60,7 +64,11 @@ This application uses ASP.NET Core Identity for user management which is depende
 Example connectionstring:
 
 ```
-Server=localhost;Integrated Security=SSPI;Database=AcmeRaffleMaltheHS;MultipleActiveResultSets=true;TrustServerCertificate=True
+{
+  "ConnectionStrings": {
+      "AcmeCorporationContextConnection": "Server=localhost;Integrated Security=SSPI;Database=AcmeRaffleMaltheHS;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  }
+}
 ```
 
 ## First run
