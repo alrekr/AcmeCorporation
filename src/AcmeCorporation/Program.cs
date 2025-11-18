@@ -3,6 +3,7 @@ using AcmeCorporation.Library;
 using AcmeCorporation.Library.Database;
 using AcmeCorporation.Library.Datacontracts;
 using AcmeCorporation.Library.Service;
+using AcmeCorporation.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ builder.Services.AddSingleton<ISerialNumberValidator, SerialNumberValidator>();
 builder.Services.AddSingleton<ISerialNumberGenerator, SerialNumberGenerator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<AdminUserSeeder>();
+builder.Services.AddScoped<RaffleSessionState>();
 
 builder.Services.AddScoped<DevelopmentSeeder>();
 
