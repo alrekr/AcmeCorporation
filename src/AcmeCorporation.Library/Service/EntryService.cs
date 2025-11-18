@@ -50,4 +50,10 @@ public class EntryService : IEntryService
 
         return (EntryServiceError.Unknown, []);
     }
+
+    /// <inheritdoc/>
+    public async Task<PagedResult<RaffleEntryViewDto>> GetPagedEntriesAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        return await _raffleRepository.GetPagesEntriesAsync(page, pageSize, cancellationToken);
+    }
 }

@@ -1,11 +1,20 @@
-﻿@using AcmeCorporation.Library.Datacontracts
+﻿@page "/"
+@using AcmeCorporation.Library.Datacontracts
 @using AcmeCorporation.Library.Service
 @implements IDisposable
 @inject IEntryService EntryService
-
+<PageTitle>Acme Corporation Raffle</PageTitle>
+<div class="text-center">
+    <h1 class="display-4">Welcome to Acme Corporation's raffle!</h1>
+</div>
+<div>
+    <p>Thank you for purchasing an Acme Corporation widget!</p>
+    <p>In order to participate, please provide the details below.</p>
+    <p>We have an easy-to-follow, simple guide to find the serial number <a asp-page="LocateSerialNumber">over here!</a></p>
+</div>
 <EditForm Model="Model" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger"/>
+    <ValidationSummary class="text-danger" />
     <div class="row mb-3">
         <label for="firstName" class="col-sm-2 col-form-label">First name: </label>
         <div class="col-sm-10">

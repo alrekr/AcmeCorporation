@@ -31,11 +31,6 @@ internal class AdminUserSeeder
             return;
         }
 
-        if (string.IsNullOrEmpty(_adminOptions.Username))
-        {
-            _logger.LogInformation("DefaultAdminUser.UserName is not configured. Skipping admin user seeding");
-        }
-
         var adminUser = await _userManager.FindByEmailAsync(_adminOptions.Email);
         if (adminUser != null)
         {
@@ -60,9 +55,10 @@ internal class AdminUserSeeder
 
         adminUser = new AcmeCorporationUser
         {
-            UserName = _adminOptions.Username,
+            UserName = _adminOptions.Email, // username is complicating the login.cshtml.cs, so lets use email instead.
             Email = _adminOptions.Email,
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            LockoutEnabled = false
         };
 
         var result = await _userManager.CreateAsync(adminUser, _adminOptions.Password);

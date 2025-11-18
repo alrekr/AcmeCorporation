@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using AcmeCorporation.Library.Datacontracts;
 using Dapper;
 using Microsoft.Extensions.Logging;
 
@@ -106,5 +107,56 @@ public class RaffleRepository
         int entryCount = await dbConnection.QuerySingleOrDefaultAsync<int>(command);
 
         return entryCount;
+    }
+
+    /// <summary>
+    /// Retrieves a paged list of raffle entry records, including participant details, for the specified page number and
+    /// page size.
+    /// </summary>
+    /// <remarks>The returned result includes the total count of entries, allowing clients to determine the
+    /// total number of pages available. Entries are ordered by entry date in descending order.</remarks>
+    /// <param name="pageNumber">The page number to retrieve. Must be greater than or equal to 1; values less than 1 are treated as 1.</param>
+    /// <param name="pageSize">The number of entries to include per page. Must be greater than or equal to 1; values less than 1 are treated as
+    /// 10.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests. The operation is canceled if the token is triggered.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a <see
+    /// cref="PagedResult{RaffleEntryViewDto}"/> with the raffle entries and pagination information for the requested
+    /// page.</returns>
+    public async Task<PagedResult<RaffleEntryViewDto>> GetPagesEntriesAsync(int pageNumber, int pageSize,
+        CancellationToken cancellationToken)
+    {
+        if (pageNumber < 1)
+        {
+            pageNumber = 1;
+        }
+
+        if (pageSize < 1)
+        {
+            pageSize = 10;
+        }
+
+        int offset = (pageNumber - 1) * pageSize;
+        const string query = """
+                           select count(*) from Acme.RaffleEntry;
+                           select p.firstname, p.lastname, p.email, e.serialnumber, e.entrydatetimeutc
+                           from acme.RaffleEntry e 
+                           inner join acme.raffleparticipant p on e.participantId = p.Id
+                           order by e.entrydatetimeutc desc
+                           offset @Offset rows
+                           fetch next @PageSize rows only;
+                           """;
+
+        object parameters = new { Offset = offset, PageSize = pageSize };
+        CommandDefinition command = new (query, parameters, cancellationToken: cancellationToken);
+        using IDbConnection connect = _database.CreateConnection();
+
+        await using var multi = await connect.QueryMultipleAsync(command);
+        int totalCount = await multi.ReadFirstAsync<int>();
+        var items = await multi.ReadAsync<RaffleEntryViewDto>();
+
+        return new PagedResult<RaffleEntryViewDto>
+        {
+            Items = items, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize
+        };
     }
 }

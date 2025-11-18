@@ -1,0 +1,19 @@
+﻿@using AcmeCorporation.Pages.Shared
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <NotAuthorized>
+                <div class="alert alert-danger">You are not authorized to access this page.</div>
+            </NotAuthorized>
+            <Authorizing>
+                <div class="text-muted">Authorizing...</div>
+            </Authorizing>
+        </AuthorizeRouteView>
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>

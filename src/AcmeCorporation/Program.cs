@@ -57,6 +57,7 @@ app.UseAuthorization();
 app.MapBlazorHub();
 app.MapRazorPages();
 
+app.MapFallbackToPage("/_Host");
 // Usually this should be done via a secure method, such as a CLI (for server apps) or a migration. 
 // For demonstration purposes this is done here.
 try

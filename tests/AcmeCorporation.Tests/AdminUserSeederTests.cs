@@ -148,7 +148,7 @@ public class AdminUserSeederTests
         var options = new AdminOptions
         {
             Email = "newadmin@test.com",
-            Username = "Admin",
+            Username = "newadmin@test.com",
             Password = "SecurePassword123!",
             RoleName = "Administrator"
         };

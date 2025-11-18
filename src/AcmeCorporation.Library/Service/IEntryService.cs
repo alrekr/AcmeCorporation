@@ -17,4 +17,14 @@ public interface IEntryService
     /// If the operation succeeded, the value of error is None.
     /// <remarks>It is the caller's responsibility to handle the error message.</remarks></returns>
     Task<(EntryServiceError error, List<string> errorMessages)> CreateParticipantAndRaffleEntry(string firstName, string lastName, string email, string serialNumber, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Retrieves a paged list of raffle entries.
+    /// </summary>
+    /// <param name="page">Indicates which page of results to return</param>
+    /// <param name="pageSize">Indicates how many results per page</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>A <see cref="PagedResult{T}"/> containing the raffle entries, which page is returned,
+    /// the page size, and how many entries available in total.</returns>
+    Task<PagedResult<RaffleEntryViewDto>> GetPagedEntriesAsync(int page, int pageSize, CancellationToken cancellationToken);
 }
