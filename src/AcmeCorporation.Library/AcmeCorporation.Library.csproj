@@ -10,6 +10,7 @@
 		<InternalsVisibleTo Include="AcmeCorporation" />
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="Bogus" Version="35.6.5" />
 	  <PackageReference Include="Dapper" Version="2.1.66" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.22" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.22" />

@@ -32,6 +32,8 @@ builder.Services.AddSingleton<ISerialNumberGenerator, SerialNumberGenerator>();
 builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<AdminUserSeeder>();
 
+builder.Services.AddScoped<DevelopmentSeeder>();
+
 builder.Services.AddServerSideBlazor();
 string environment = builder.Environment.EnvironmentName;
 builder.Configuration.AddJsonFile("appsettings.json").AddJsonFile($"appsettings.{environment}.json");
@@ -96,13 +98,31 @@ app.MapGet("/api/v1/serialnumbers", (int? n, ISerialNumberGenerator generator, I
 
     return Results.Ok(serialNumbers);
 })
-    .WithName("GenerateSerialNumbers") 
-    .WithSummary("Generates a list of unique serial numbers.") 
-    .WithDescription("Returns a JSON array of serial numbers. Limits apply.") 
-    .Produces<List<string>>() 
-    .Produces(StatusCodes.Status400BadRequest); 
+    .WithName("GenerateSerialNumbers")
+    .WithSummary("Generates a list of unique serial numbers.")
+    .WithDescription("Returns a JSON array of serial numbers. Limits apply.")
+    .Produces<List<string>>()
+    .Produces(StatusCodes.Status400BadRequest);
 
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapPost("/api/dev/seed/{count:int}",
+            async (int count, DevelopmentSeeder seeder, CancellationToken cancellationToken) =>
+            {
+                if (count > 1000)
+                {
+                    return Results.BadRequest("Let's limit seeding to 1000 at a time for now");
+                }
+
+                int created = await seeder.SeedAsync(count, cancellationToken);
+
+                return Results.Ok(new { Message = $"Successfully seeded {created} entries." });
+            })
+        .WithSummary("Dev only: Seeds the database with fake raffle entries")
+        .WithTags("Development");
+}
 app.Run();
 
 
-public partial class Program{}
+public partial class Program { }

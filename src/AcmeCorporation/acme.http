@@ -12,3 +12,6 @@ GET https://localhost:7023/api/v1/serialnumbers?n=100
 
 ### Get 1000 serial numbers (should fail under current configuration)
 GET https://localhost:7023/api/v1/serialnumbers?n=1000
+
+### Seed the database with up to 793 entries
+POST https://localhost:7023/api/dev/seed/793
